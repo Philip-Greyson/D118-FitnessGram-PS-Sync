@@ -1,0 +1,5 @@
+.venv/
+*.json
+ruff.toml
+FG_Log.txt
+FG.csv
