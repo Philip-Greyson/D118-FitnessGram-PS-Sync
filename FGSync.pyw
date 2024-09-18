@@ -23,6 +23,7 @@ DB_CS = os.environ.get('POWERSCHOOL_PROD_DB')  # the IP address, port, and datab
 SFTP_UN = os.environ.get('FITNESSGRAM_SFTP_USERNAME')  # the username provided by FitnessGram to log into the SFTP server
 SFTP_PW = os.environ.get('FITNESSGRAM_SFTP_PASSWORD')  # the password provided by FitnessGram to log in using the username above
 SFTP_HOST = os.environ.get('FITNESSGRAM_SFTP_ADDRESS')  # the URL/server IP provided by FitnessGram
+CNOPTS = pysftp.CnOpts(knownhosts='known_hosts')  # connection options to use the known_hosts file for key validation
 
 DEFAULT_STUDENT_PASS = os.environ.get('FITNESSGRAM_STUDENT_PASS')
 DEFAULT_STAFF_PASS = os.environ.get('FITNESSGRAM_STAFF_PASS')
@@ -33,6 +34,7 @@ print(f"DBUG: SFTP Username: {SFTP_UN} |SFTP Password: {SFTP_PW} |SFTP Server: {
 PE_CLASS_NUMBERS = ['PEKA','PEKP','PE1','PE2','PE3','PE4','PE5','PE6','PE7','PE8']  # course "numbers" from within PS that will be looked for, must match exactly
 VALID_SCHOOL_CODES = ['2001','2005','2007','1004']  # list of PS school codes to process students from and search for classes
 EMAIL_DOMAIN = '@d118.org'  # domain used to construct student emails from their student number
+OUTPUT_FILE_NAME = 'FG.csv'  # the file name that is used for output and upload
 
 if __name__ == '__main__':  # main file execution
     with open('FG_Log.txt', 'w') as log:
@@ -40,7 +42,7 @@ if __name__ == '__main__':  # main file execution
         startTime = startTime.strftime('%H:%M:%S')
         print(f'INFO: Execution started at {startTime}')
         print(f'INFO: Execution started at {startTime}', file=log)
-        with open('FG.csv', 'w') as output:
+        with open(OUTPUT_FILE_NAME, 'w') as output:
             with oracledb.connect(user=DB_UN, password=DB_PW, dsn=DB_CS) as con:  # create the connecton to the database
                 with con.cursor() as cur:  # start an entry cursor
                     print('SchoolID,StudentID,StudentFirstName,StudentLastName,StudentBirthdate,StudentGrade,StudentSexAssignedAtBirth,StudentUsername,StudentPassword,StudentReportEmail,StudentIsActive,ClassName,ClassID,ClassStartDate,ClassEndDate,TeacherID,TeacherFirstName,TeacherLastName,TeacherUsername,TeacherPassword,TeacherEmail,TeacherIsActive', file=output)  # print out the header row in the file
@@ -105,3 +107,15 @@ if __name__ == '__main__':  # main file execution
                         else:
                             print(f'ERROR: Could not find valid term at building {school} for todays date of {today}, skipping building')
                             print(f'ERROR: Could not find valid term at building {school} for todays date of {today}, skipping building', file=log)
+
+        #after all the output file is done writing and now closed, open an sftp connection to the server and place the file on there
+        with pysftp.Connection(SFTP_HOST, username=SFTP_UN, password=SFTP_PW, cnopts=CNOPTS) as sftp:
+            print(f'INFO: SFTP connection established to {SFTP_HOST}')
+            print(f'INFO: SFTP connection established to {SFTP_HOST}', file=log)
+            # print(sftp.pwd)  # debug to show current directory
+            # print(sftp.listdir())  # debug to show files and directories in our location
+            # print(sftp.pwd) # debug to show current directory
+            # print(sftp.listdir())  # debug to show files and directories in our location
+            sftp.put(OUTPUT_FILE_NAME)  # upload the file onto the sftp server
+            print(f"INFO: FitnessGram file placed on remote server for {today}")
+            print(f"INFO: FitnessGram file placed on remote server for {today}", file=log)
