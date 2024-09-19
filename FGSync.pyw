@@ -28,8 +28,8 @@ SFTP_PW = os.environ.get('FITNESSGRAM_SFTP_PASSWORD')  # the password provided b
 SFTP_HOST = os.environ.get('FITNESSGRAM_SFTP_ADDRESS')  # the URL/server IP provided by FitnessGram
 CNOPTS = pysftp.CnOpts(knownhosts='known_hosts')  # connection options to use the known_hosts file for key validation
 
-DEFAULT_STUDENT_PASS = os.environ.get('FITNESSGRAM_STUDENT_PASS')
-DEFAULT_STAFF_PASS = os.environ.get('FITNESSGRAM_STAFF_PASS')
+DEFAULT_STUDENT_PASS = os.environ.get('FITNESSGRAM_STUDENT_PASS')  # password that will be set for students if the option to overwrite username/password is enabled on the FG side. Useful to reset all at the start of the year and then let them reset to something different via email
+DEFAULT_STAFF_PASS = os.environ.get('FITNESSGRAM_STAFF_PASS')  # same deal as student default password
 
 print(f"DBUG: DB Username: {DB_UN} |DB Password: {DB_PW} |DB Server: {DB_CS}")  # debug so we can see where oracle is trying to connect to/with
 print(f"DBUG: SFTP Username: {SFTP_UN} |SFTP Password: {SFTP_PW} |SFTP Server: {SFTP_HOST}")  # debug so we can see what FTP info is trying to be used
@@ -110,12 +110,12 @@ if __name__ == '__main__':  # main file execution
                                                         teacherFirstName = str(classEntry[3])
                                                         teacherLastName = str(classEntry[4])
                                                         teacherEmail = str(classEntry[5])
-                                                        teacherUsername = teacherEmail.split('@')[0]  # set their username to their email without the domain
+                                                        # teacherUsername = teacherEmail.split('@')[0]  # set their username to their email without the domain
                                                         teacherID = int(classEntry[6])
                                                         # print(classEntry)
                                                         # print(classEntry, file=log)
-                                                        print(f'{school},{stuNum},{firstName},{lastName},{birthday},{grade},{gender},{stuNum},{DEFAULT_STUDENT_PASS},{email},Y,{className},{classID},{startDate},{endDate},{teacherID},{teacherFirstName},{teacherLastName},{teacherUsername},{DEFAULT_STAFF_PASS},{teacherEmail},Y')
-                                                        print(f'{school},{stuNum},{firstName},{lastName},{birthday},{grade},{gender},{stuNum},{DEFAULT_STUDENT_PASS},{email},Y,{className},{classID},{startDate},{endDate},{teacherID},{teacherFirstName},{teacherLastName},{teacherUsername},{DEFAULT_STAFF_PASS},{teacherEmail},Y', file=output)
+                                                        print(f'{school},{stuNum},{firstName},{lastName},{birthday},{grade},{gender},{stuNum},{DEFAULT_STUDENT_PASS},{email},Y,{className},{classID},{startDate},{endDate},{teacherID},{teacherFirstName},{teacherLastName},{teacherEmail},{DEFAULT_STAFF_PASS},{teacherEmail},Y')
+                                                        print(f'{school},{stuNum},{firstName},{lastName},{birthday},{grade},{gender},{stuNum},{DEFAULT_STUDENT_PASS},{email},Y,{className},{classID},{startDate},{endDate},{teacherID},{teacherFirstName},{teacherLastName},{teacherEmail},{DEFAULT_STAFF_PASS},{teacherEmail},Y', file=output)
                                                     except Exception as er:
                                                         print(f'ERROR while processing teacher info or file output for course {classEntry[2]} and student {stuNum}: {er}')
                                                         print(f'ERROR while processing teacher info or file output for course {classEntry[2]} and student {stuNum}: {er}', file=log)
