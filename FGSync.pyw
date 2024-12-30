@@ -12,7 +12,6 @@ Needs oracledb, pysftp: pip install oracledb pysftp --upgrade
 # importing module
 import datetime  # used to get current date for course info
 import os  # needed to get environement variables
-import sys
 from datetime import *
 
 import oracledb
@@ -92,7 +91,7 @@ if __name__ == '__main__':  # main file execution
                                                 gender = str(student[6])
                                                 email = stuNum + EMAIL_DOMAIN
                                                 # now go through their classes and find those matching one of the class numbers
-                                                classBinds = ",".join(":" + str(i + 1) for i in range(len(PE_CLASS_NUMBERS)))# dynamically build the binds list based on the class numbers constant list. See https://python-oracledb.readthedocs.io/en/latest/user_guide/bind.html#bind
+                                                classBinds = ",".join(":" + str(i + 1) for i in range(len(PE_CLASS_NUMBERS)))  # dynamically build the binds list based on the class numbers constant list. See https://python-oracledb.readthedocs.io/en/latest/user_guide/bind.html#bind
                                                 classStudentInfo = PE_CLASS_NUMBERS + [internalID, termid]  # append the student internal ID and termID to the class numbers so we can pass all of them together as binds to the query
                                                 sqlQuery = f'SELECT cc.course_number, cc.sectionid, courses.course_name, users.first_name, users.last_name, users.email_addr, users.teachernumber FROM cc \
                                                     LEFT JOIN courses ON cc.course_number = courses.course_number \
@@ -123,8 +122,8 @@ if __name__ == '__main__':  # main file execution
                                                 print(f'ERROR while processing student info or courses for {student[0]}: {er}')
                                                 print(f'ERROR while processing student info or courses for {student[0]}: {er}', file=log)
                                     except Exception as er:
-                                        print(f'ERROR while performing SQL query to find students at building {school}')
-                                        print(f'ERROR while performing SQL query to find students at building {school}', file=log)
+                                        print(f'ERROR while performing SQL query to find students at building {school}: {er}')
+                                        print(f'ERROR while performing SQL query to find students at building {school}: {er}', file=log)
                                 else:
                                     print(f'ERROR: Could not find valid term at building {school} for todays date of {today}, skipping building')
                                     print(f'ERROR: Could not find valid term at building {school} for todays date of {today}, skipping building', file=log)
