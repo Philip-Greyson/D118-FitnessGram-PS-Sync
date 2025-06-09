@@ -125,8 +125,8 @@ if __name__ == '__main__':  # main file execution
                                         print(f'ERROR while performing SQL query to find students at building {school}: {er}')
                                         print(f'ERROR while performing SQL query to find students at building {school}: {er}', file=log)
                                 else:
-                                    print(f'ERROR: Could not find valid term at building {school} for todays date of {today}, skipping building')
-                                    print(f'ERROR: Could not find valid term at building {school} for todays date of {today}, skipping building', file=log)
+                                    print(f'WARN: Could not find valid term at building {school} for todays date of {today}, skipping building')
+                                    print(f'WARN: Could not find valid term at building {school} for todays date of {today}, skipping building', file=log)
                             except Exception as er:
                                 print(f'ERROR: General error while processing building {school}: {er}')
                                 print(f'ERROR: General error while processing building {school}: {er}', file=log)
